@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+    innai-website:
+        image: innai-website:1.0
+        build:
+            context: ./website
+        ports:
+            - 80:3000
+        environment:
+            - PREDICT_SERVER_BASE_URL=http://innai-server:8080/api/V1
+
+    innai-server:
+        image: innai-server:1.0
+        build:
+            context: ./server/InnAi.Server/InnAi.Server
+
+    innai-predict:
+        image: innai-predict:1.0
+        build:
+            context: ./innai

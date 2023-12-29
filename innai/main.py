@@ -9,7 +9,7 @@ from model.inn_ai_model import InnAiModel
 app = FastAPI()
 
 
-@app.get("/predict")
+@app.post("/predict")
 async def predict(input: List[float]) -> List[float]:
     model = InnAiModel()
     model.load_state_dict(torch.load('model/model.pt'))

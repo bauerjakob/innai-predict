@@ -47,7 +47,8 @@ public class InnAiController : ControllerBase
             {
                 PredictionValues = result.PredictionValues,
                 ActualValues = result.ActualValues,
-                AverageDeviation = result.AverageDeviation
+                AverageDeviation = result.AverageDeviation,
+                PercentageDeviation = result.PercentageDeviation
             };
 
             return Ok(resultDto);

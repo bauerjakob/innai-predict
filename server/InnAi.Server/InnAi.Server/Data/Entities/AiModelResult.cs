@@ -12,7 +12,10 @@ public class AiModelResult
 
     public double[] ActualValues { get; set; } = null!;
     
+    
     public double AverageDeviation { get; set; }
+    
+    public double PercentageDeviation { get; set; }
 
     public virtual AiModel? AiModel { get; set; }
 }

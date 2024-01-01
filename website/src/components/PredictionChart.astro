@@ -9,11 +9,13 @@ const dateOption = Astro.url.searchParams.get("date");
 
 let dataset = [];
 let averageDeviation = undefined;
+let percentageDeviation = undefined;
 
 if (dateOption) {
     const dataPrediction = await predictService.predictDate(dateOption);
 
     averageDeviation = Math.round(dataPrediction.averageDeviation! * 100) / 100;
+    percentageDeviation = Math.round(dataPrediction.percentageDeviation! * 100 * 100) / 100;
 
     dataset = [
         {
@@ -53,7 +55,15 @@ const datasetStr = JSON.stringify(dataset);
             <Card
                 title="Average devitation"
                 hideArrow={true}
-                body={`${averageDeviation}cm`}
+                body={`${averageDeviation} cm`}
+            /> : <></>
+        }
+        {
+            percentageDeviation ? 
+            <Card
+                title="Percentage deviation"
+                hideArrow={true}
+                body={`${percentageDeviation} %`}
             /> : <></>
         }
     </ul>
@@ -66,15 +76,15 @@ const datasetStr = JSON.stringify(dataset);
     }
     #cards {
         margin: 1.5rem 0;
-        width: 48%;
+        // width: 48%;
         
     }
-    // .link-card-grid {
-    //     display: grid;
-    //     grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-    //     gap: 2rem;
-    //     padding: 0;
-    // }
+    .link-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+        gap: 2rem;
+        padding: 0;
+    }
 </style>
 
 <script>

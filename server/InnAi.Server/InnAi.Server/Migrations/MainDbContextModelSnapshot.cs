@@ -73,7 +73,10 @@ namespace InnAi.Server.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<double>("PercentageDeviation")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("PredictionValues")
                         .IsRequired()

@@ -22,7 +22,8 @@ public class MainDbRepository : IMainDbRepository
             .SingleOrDefaultAsync(x => x.AiModelId == aiModel.Id && x.DateTime == dateTime);
     }
 
-    public async Task AddNewAiModelResultAsync(Guid modelId, DateTime dateTime, double[] predictedValues, double[] actualValues, double averageDeviation)
+    public async Task AddNewAiModelResultAsync(Guid modelId, DateTime dateTime, double[] predictedValues,
+        double[] actualValues, double averageDeviation, double percentageDeviation)
     {
         var aiModel = await GetAiModelAsync(modelId);
 
@@ -32,7 +33,8 @@ public class MainDbRepository : IMainDbRepository
             DateTime = dateTime,
             PredictionValues = predictedValues,
             ActualValues = actualValues,
-            AverageDeviation = averageDeviation
+            AverageDeviation = averageDeviation,
+            PercentageDeviation = percentageDeviation
         };
 
         await _dbContext.AiModelResults.AddAsync(aiModelResult);

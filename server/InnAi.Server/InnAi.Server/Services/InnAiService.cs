@@ -25,7 +25,7 @@ public class InnAiService(
         }) ?? throw new Exception();
     }
 
-    public async Task<(double[] PredictionValues, double[] ActualValues, double AverageDeviation)> PredictHistoryAsync(DateTime dateTime, Guid? modelId = null)
+    public async Task<(double[] PredictionValues, double[] ActualValues, double AverageDeviation, double PercentageDeviation)> PredictHistoryAsync(DateTime dateTime, Guid? modelId = null)
     {
         var now = DateTime.UtcNow;
 
@@ -40,17 +40,18 @@ public class InnAiService(
         var dbModelResult = await dbRepository.GetAiModelResultOrDefaultAsync(aiModelId, dateTime);
         if (dbModelResult is not null)
         {
-            return (dbModelResult.PredictionValues, dbModelResult.ActualValues, dbModelResult.AverageDeviation);
+            return (dbModelResult.PredictionValues, dbModelResult.ActualValues, dbModelResult.AverageDeviation, dbModelResult.PercentageDeviation);
         }
 
         var predictedValues = await predictionService.PredictAsync(aiModelId, dateTime);
         var actualValues = await predictionService.GetActualAsync(dateTime);
 
         var averageDeviation = CalculateAverageDeviation(predictedValues, actualValues);
+        var percentageDeviation = CalculatePercentageDeviation(predictedValues, actualValues);
 
-        await dbRepository.AddNewAiModelResultAsync(aiModelId, dateTime, predictedValues, actualValues, averageDeviation);
+        await dbRepository.AddNewAiModelResultAsync(aiModelId, dateTime, predictedValues, actualValues, averageDeviation, percentageDeviation);
 
-        return (predictedValues, actualValues, averageDeviation);
+        return (predictedValues, actualValues, averageDeviation, percentageDeviation);
     }
 
     private static double CalculateAverageDeviation(IReadOnlyCollection<double> values1, IReadOnlyList<double> values2)
@@ -65,5 +66,18 @@ public class InnAiService(
             .Sum();
 
         return sum / values1.Count;
+    }
+    
+    private static double CalculatePercentageDeviation(IReadOnlyCollection<double> actualValues, IReadOnlyList<double> predictedValues)
+    {
+        if (actualValues.Count != predictedValues.Count)
+        {
+            throw new Exception();
+        }
+
+        var sumActual = actualValues.Sum();
+        var diff = Math.Abs(sumActual - predictedValues.Sum());
+
+        return diff / sumActual;
     }
 }

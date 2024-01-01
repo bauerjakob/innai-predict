@@ -5,14 +5,17 @@ import torch
 from torch.autograd import Variable
 
 from model.salmon_swirl_model import SalmonSwirlModel
+from model.zander_zenith_model import ZanderZenithModel
 
 app = FastAPI()
 
 @app.post("/predict/{modelId}")
 async def predict(modelId: str, input: List[float]) -> List[float]:
     model = None
-    if (modelId == '60740723-5ce0-4989-9d79-ecf4c436a029'):
+    if modelId == '60740723-5ce0-4989-9d79-ecf4c436a029':
         model = SalmonSwirlModel()
+    elif modelId == '897fe3db-b56e-42fa-be38-555810029dea':
+        model = ZanderZenithModel()
     else:
         raise Exception()
 

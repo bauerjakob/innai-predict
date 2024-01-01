@@ -6,7 +6,8 @@ public interface IMainDbRepository
 {
     public Task<AiModelResult?> GetAiModelResultOrDefaultAsync(Guid modelId, DateTime dateTime);
 
-    public Task AddNewAiModelResultAsync(Guid modelId, DateTime dateTime, double[] predictedValues, double[] actualValues, double averageDeviation);
+    public Task AddNewAiModelResultAsync(Guid modelId, DateTime dateTime, double[] predictedValues,
+        double[] actualValues, double averageDeviation, double percentageDeviation);
 
     public Task<AiModel> GetDefaultAiModelAsync();
     public Task<AiModel> GetAiModelAsync(Guid modelId);

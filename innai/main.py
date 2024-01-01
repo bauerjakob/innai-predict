@@ -8,7 +8,6 @@ from model.salmon_swirl_model import SalmonSwirlModel
 
 app = FastAPI()
 
-
 @app.post("/predict/{modelId}")
 async def predict(modelId: str, input: List[float]) -> List[float]:
     model = None

@@ -1,0 +1,120 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Card from "../components/Card.astro";
+import PredictionChart from "../components/PredictionChart.astro";
+import Footer from "../components/Footer.astro";
+import Datepicker from "../components/Datepicker.astro";
+
+const dateOption = Astro.url.searchParams.get("date");
+const date = new Date(dateOption);
+
+const dateValue2 = dateOption ? `${date.getFullYear()}` : null;
+---
+
+<Layout title="Welcome to Astro.">
+    <main>
+        <h1>Welcome to <span class="text-gradient">InnAi</span></h1>
+        <Card
+            body="InnAI is an AI model for predicting the water levels of the Inn River in Rosenheim for the next 24 hours based on rainfall data."
+        />
+
+        <div id="chart-wrapper">
+            <div class="center">
+                {
+                    dateOption ? (
+                        <h2>
+                            On
+                            <span class="text-gradient">
+                                {`${date.getDate()}.${
+                                    date.getMonth() + 1
+                                }.${date.getFullYear()}`}
+                            </span>
+                        </h2>
+                    ) : (
+                        <h2>
+                            Next <span class="text-gradient">24</span> hours
+                        </h2>
+                    )
+                }
+                <Datepicker />
+            </div>
+            <PredictionChart />
+        </div>
+
+        <section id="generalSection">
+            <h2>General stuff</h2>
+            <ul id="cards" role="list" class="link-card-grid">
+                <Card
+                    href="https://github.com/bauerjakob/innai"
+                    title="OpenSource"
+                    body="View Project on GitHub."
+                />
+                <Card
+                    href="https://bauer-jakob.de"
+                    title="Developer"
+                    body="Visit website of developer."
+                />
+            </ul>
+        </section>
+    </main>
+    <Footer />
+</Layout>
+
+<style>
+    main {
+        margin: auto;
+        padding: 1rem;
+        width: 800px;
+        max-width: calc(100% - 2rem);
+        color: white;
+        font-size: 20px;
+        line-height: 1.6;
+    }
+
+    h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        margin-bottom: 1em;
+        margin-top: 4rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        display: inline;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .text-gradient {
+        background-image: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 400%;
+        background-position: 0%;
+    }
+
+    .link-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+        gap: 2rem;
+        padding: 0;
+    }
+
+    #generalSection {
+        margin-top: 4rem;
+
+        #cards {
+            margin-top: 1rem;
+        }
+    }
+
+    .center {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>

@@ -1,0 +1,44 @@
+---
+import Datepicker from "flowbite-datepicker/Datepicker";
+
+const dateOption = Astro.url.searchParams.get("date");
+const date = new Date(dateOption);
+const dateValue = dateOption
+    ? `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+    : null;
+---
+
+<div>
+    <input
+        id="datepicker"
+        value={dateValue}
+        datepicker
+        type="text"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="Select date"
+    />
+</div>
+
+<script>
+    import Datepicker from "flowbite-datepicker/Datepicker";
+
+    const datepickerEl = document.getElementById("datepicker");
+
+    const picker = new Datepicker(datepickerEl, {
+        format: "dd.mm.yyyy",
+    });
+
+    if (datepickerEl) {
+        datepickerEl.addEventListener("changeDate", function (e) {
+            const localTimestamp = picker.dates;
+
+            var date = new Date(localTimestamp[0]);
+            var isoTime = `${date.getFullYear()}-${
+                date.getMonth() + 1
+            }-${date.getDate()}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("date", isoTime);
+            window.location.search = urlParams as any;
+        });
+    }
+</script>

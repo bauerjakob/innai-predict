@@ -1,0 +1,110 @@
+---
+import type { HistoryResultDto } from "../dtos/HistoryResultDto.ts";
+import { PredictService } from "../services/PredictService.ts";
+import Card from "./Card.astro";
+
+const predictService = new PredictService();
+
+const dateOption = Astro.url.searchParams.get("date");
+
+let dataset = [];
+let averageDeviation = undefined;
+
+if (dateOption) {
+    const dataPrediction = await predictService.predictDate(dateOption);
+
+    averageDeviation = Math.round(dataPrediction.averageDeviation! * 100) / 100;
+
+    dataset = [
+        {
+            label: "Predicted",
+            data: dataPrediction.predictionValues,
+            borderWidth: 3,
+            borderColor: "#185D8C",
+        },
+        {
+            label: "Actual",
+            data: dataPrediction.actualValues,
+            borderWidth: 3,
+            borderColor: "#326FEA",
+        },
+    ];
+} else {
+    const dataPrediction = await predictService.predictCurrent();
+
+    dataset = [
+        {
+            label: "Predicted",
+            data: dataPrediction,
+            borderWidth: 3,
+            borderColor: "#185D8C",
+        },
+    ];
+}
+
+const datasetStr = JSON.stringify(dataset);
+---
+
+<div>
+    <canvas id="myChart"></canvas>
+    <ul id="cards" role="list" class="link-card-grid">
+        {
+            averageDeviation ? 
+            <Card
+                title="Average devitation"
+                hideArrow={true}
+                body={`${averageDeviation}cm`}
+            /> : <></>
+        }
+    </ul>
+    <p id="dataset">{datasetStr}</p>
+</div>
+
+<style lang="scss">
+    #dataset {
+        display: none;
+    }
+    #cards {
+        margin: 1.5rem 0;
+        width: 48%;
+        
+    }
+    // .link-card-grid {
+    //     display: grid;
+    //     grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+    //     gap: 2rem;
+    //     padding: 0;
+    // }
+</style>
+
+<script>
+    import { Chart } from "chart.js/auto";
+
+    const ctx = document.getElementById("myChart");
+
+    const datasetElement = document.getElementById("dataset");
+
+    if (datasetElement?.innerHTML) {
+        const dataset = JSON.parse(datasetElement!.innerHTML);
+
+        let labels = [];
+        for (let i = 0; i < 24; i++) {
+            labels.push(i + 1);
+        }
+
+        new Chart(ctx as any, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: dataset,
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+</script>

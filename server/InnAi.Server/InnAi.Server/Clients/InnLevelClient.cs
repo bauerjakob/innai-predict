@@ -26,7 +26,7 @@ public class InnLevelClient : IInnLevelClient
     public async Task<double[]> GetAsync(DateTime dateTime)
     {
         var timestamp = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0);
-        var dateStringFrom = ToDateString(timestamp - TimeSpan.FromHours(4));
+        var dateStringFrom = ToDateString(timestamp - TimeSpan.FromHours(6));
         var dateStringEnd = ToDateString(timestamp + TimeSpan.FromHours(1));
         List<double> ret = new();
         foreach (var station in _options.Stations)

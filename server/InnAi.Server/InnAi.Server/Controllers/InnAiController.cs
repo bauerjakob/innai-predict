@@ -21,7 +21,6 @@ public class InnAiController : ControllerBase
     [HttpGet("predict/current")]
     public async Task<ActionResult<double[]>> PredictCurrentAsync()
     {
-
         try
         {
             var result = await _innAiService.PredictCurrentAsync();

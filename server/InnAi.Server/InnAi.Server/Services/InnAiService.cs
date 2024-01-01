@@ -33,9 +33,9 @@ public class InnAiService : IInnAiService
 
         var modelInput = precipitationMap.Concat(innLevels).ToArray();
 
-        var predicitons = await _predictionClient.PredictAsync(modelInput);
+        var predictions = await _predictionClient.PredictAsync(modelInput);
 
-        var denormalizedPredictions = predicitons.Select(x => x.Denormalize(0, 255));
+        var denormalizedPredictions = predictions.Select(x => x.Denormalize(0, 500));
 
         return denormalizedPredictions.ToArray();
     }

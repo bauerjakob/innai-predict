@@ -23,14 +23,22 @@ public class InnLevelClient : IInnLevelClient
         };
     }
     
-    public async Task<double[]> GetAsync(DateTime dateTime)
+    public async Task<double[]> GetAsync(DateTime dateTime, int count)
     {
+        if (count > _options.Stations.Length)
+        {
+            throw new Exception();
+        }
+        
         var timestamp = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0);
         var dateStringFrom = ToDateString(timestamp - TimeSpan.FromHours(6));
         var dateStringEnd = ToDateString(timestamp + TimeSpan.FromHours(1));
         List<double> ret = new();
-        foreach (var station in _options.Stations)
+
+        for (var i = 0; i < count; i++)
         {
+            var station = _options.Stations[i];
+            
             var response = await _client.GetAsync($"/api/station/1.0/{(station.Contains("at") ? "height" : "flow")}/{station}/history?granularity=hour&loadEndDate={dateStringEnd}&loadStartDate={dateStringFrom}");
             
             var content = await response.Content.ReadAsStreamAsync();

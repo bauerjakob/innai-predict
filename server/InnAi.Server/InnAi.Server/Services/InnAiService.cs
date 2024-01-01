@@ -1,164 +1,69 @@
-using System.Globalization;
-using ImageMagick;
-using InnAi.Server.Clients;
-using InnAi.Server.Extensions;
+using InnAi.Server.Data.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace InnAiServer.Services;
 
-public class InnAiService : IInnAiService
+public class InnAiService(
+    ILogger<InnAiService> logger,
+    IPredictionService predictionService,
+    IMainDbRepository dbRepository,
+    IMemoryCache memoryCache)
+    : IInnAiService
 {
-    private readonly IInnLevelClient _innLevelClient;
-    private readonly IPrecipitationMapClient _precipitationMapClient;
-    private readonly IInnAiPredictionClient _predictionClient;
-
-    public InnAiService(IInnLevelClient innLevelClient, IPrecipitationMapClient precipitationMapClient, IInnAiPredictionClient predictionClient)
+    public async Task<double[]> PredictCurrentAsync(Guid? modelId = null)
     {
-        _innLevelClient = innLevelClient;
-        _precipitationMapClient = precipitationMapClient;
-        _predictionClient = predictionClient;
-    }
-    
-    public Task<double[]> PredictCurrentAsync()
-    {
-        return PredictAsync(DateTime.UtcNow);
-    }
+        var now = DateTime.Now;
+        var modelIdNotNull = modelId ?? (await dbRepository.GetDefaultAiModelAsync()).ExternalId;
+        var cacheKey =
+            $"{nameof(InnAiService)}.{nameof(PredictCurrentAsync)}.{modelIdNotNull}.{now.Year}.{now.Month}.{now.Day}.{now.Hour}";
 
-    public async Task<double[]> PredictAsync(DateTime timestamp)
-    {
-        var time = new DateTime(timestamp.Year, timestamp.Month, timestamp.Day, timestamp.Hour, 0, 0);
-
-        var innLevels = await GetNormalizedInnLevelsAsync(time);
-
-        var precipitationMap = await GetNormalizedPrecipitationMapAsync(time);
-
-        var modelInput = precipitationMap.Concat(innLevels).ToArray();
-
-        var predictions = await _predictionClient.PredictAsync(modelInput);
-
-        var denormalizedPredictions = predictions.Select(x => x.Denormalize(0, 500));
-
-        return denormalizedPredictions.ToArray();
-    }
-
-    public async Task<double[]> GetActualAsync(DateTime dateTime)
-    {
-        var result = new double[24];
-        for (var i = 0; i < result.Length; i++)
+        return await memoryCache.GetOrCreateAsync(cacheKey, async factory =>
         {
-            var innlevels = await _innLevelClient.GetAsync(dateTime);
-            result[i] = innlevels.First();
-            dateTime += TimeSpan.FromHours(1);
-        }
-
-        return result;
+            factory.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+            
+            return await predictionService.PredictCurrentAsync(modelIdNotNull);
+        }) ?? throw new Exception();
     }
 
-    public async Task<double[]> GetNormalizedPrecipitationMapAsync(DateTime time)
+    public async Task<(double[] PredictionValues, double[] ActualValues, double AverageDeviation)> PredictHistoryAsync(DateTime dateTime, Guid? modelId = null)
     {
-        var precipitationMap = await _precipitationMapClient.GetAsync(time);
-        var imageValues = ImageToValues(precipitationMap);
-        var imageValuesReduced = ReduceImageValues(imageValues, x => (int)x.Average(), 32);
+        var now = DateTime.UtcNow;
 
-        var size = imageValuesReduced.GetLength(0);
-        var precipitationMapNormalized = new List<double>(size * size);
-        for (int i = 0; i < size; i++)
+        if (!(now - TimeSpan.FromDays(1) > dateTime))
         {
-            for (int j = 0; j < size; j++)
-            {
-                precipitationMapNormalized.Add(((double) imageValuesReduced[i, j]).Normalize(0, 255));
-            }
+            throw new Exception();
         }
-
-        return precipitationMapNormalized.ToArray();
-    }
-
-    private async Task<IEnumerable<double>> GetNormalizedInnLevelsAsync(DateTime time)
-    {
-        var innLevels = await _innLevelClient.GetAsync(time);
-        var innLevelsNormalized = innLevels.Select(x => x.Normalize(0, 500));
-        return innLevelsNormalized;
-    }
-
-    private int[,] ImageToValues(byte[] imageData)
-    {
-        var image = new MagickImage(imageData, MagickFormat.Png);
         
-        var pixels = image.GetPixels();
-        var width = image.Width;
-        var height = image.Height;
-        
-        var values = new int[height, width];
+        var aiModel = modelId.HasValue ? await dbRepository.GetAiModelAsync(modelId.Value) : await dbRepository.GetDefaultAiModelAsync();
+        var aiModelId = aiModel.ExternalId;
 
-        for (int y = 0; y < height; y++)
+        var dbModelResult = await dbRepository.GetAiModelResultOrDefaultAsync(aiModelId, dateTime);
+        if (dbModelResult is not null)
         {
-            for (int x = 0; x < width; x++)
-            {
-                var pixel = pixels.GetPixel(x, y);
-                var color = pixel.ToColor();
-                var hexColor = color?.ToHexString();
-                var value = ReadValueAsync(hexColor);
-                values[y, x] = value;
-            }
+            return (dbModelResult.PredictionValues, dbModelResult.ActualValues, dbModelResult.AverageDeviation);
         }
 
-        return values;
+        var predictedValues = await predictionService.PredictAsync(aiModelId, dateTime);
+        var actualValues = await predictionService.GetActualAsync(dateTime);
+
+        var averageDeviation = CalculateAverageDeviation(predictedValues, actualValues);
+
+        await dbRepository.AddNewAiModelResultAsync(aiModelId, dateTime, predictedValues, actualValues, averageDeviation);
+
+        return (predictedValues, actualValues, averageDeviation);
     }
 
-    private int ReadValueAsync(string hexColor)
+    private static double CalculateAverageDeviation(IReadOnlyCollection<double> values1, IReadOnlyList<double> values2)
     {
-        var hexColorExtended = $"{hexColor}{(hexColor.Length == 7 ? "ff" : string.Empty)}";
-
-        var hexColorUnextended = hexColorExtended.Substring(1, 2);
-
-        return int.Parse(hexColorUnextended, NumberStyles.HexNumber);  
-    }
-
-
-    private int[,] ReduceImageValues(int[,] imageData, Func<int[], int> selector, int factor)
-    {
-        var size = imageData.GetLength(0) / factor;
-
-        var ret = new int[size, size];
-
-        for (var i = 0; i < size; i++)
+        if (values1.Count != values2.Count)
         {
-            for (var j = 0; j < size; j++)
-            {
-                List<int> values = new();
-                for (var x = 0; x < factor; x++)
-                {
-                    for (var y = 0; y < factor; y++)
-                    { 
-                        var value = imageData[i * factor + x, j * factor + y];
-                        values.Add(value);
-                    }
-                }
-
-                ret[i, j] = selector(values.ToArray());
-            }
+            throw new Exception();
         }
 
-        return ret;
-    }
+        var sum = values1
+            .Select((t, i) => Math.Abs(t - values2[i]))
+            .Sum();
 
-    private double[,] NormalizeData(int[,] data)
-    {
-        int min = 0;
-        int max = 255;
-        
-        var size = data.GetLength(0);
-        var ret = new double[size, size];
-        
-        for (var i = 0; i < size; i++)
-        {
-            for (var j = 0; j < size; j++)
-            {
-                var value = data[i, j];
-
-                ret[i, j] = ((double)value - min) / ((double)max - min);
-            }
-        }
-
-        return ret;
+        return sum / values1.Count;
     }
 }

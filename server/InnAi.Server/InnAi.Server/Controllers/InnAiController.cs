@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using InnAi.Server.Dtos;
 using InnAiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,11 +20,11 @@ public class InnAiController : ControllerBase
     }
 
     [HttpGet("predict/current")]
-    public async Task<ActionResult<double[]>> PredictCurrentAsync()
+    public async Task<ActionResult<double[]>> PredictCurrentAsync(Guid? modelId)
     {
         try
         {
-            var result = await _innAiService.PredictCurrentAsync();
+            var result = await _innAiService.PredictCurrentAsync(modelId);
             return Ok(result);
         }
         catch (Exception e)
@@ -33,32 +34,23 @@ public class InnAiController : ControllerBase
         }
     }
     
-    [HttpGet("predict")]
-    public async Task<ActionResult<double[]>> PredictCurrentAsync(int year, int month, int day, int hour)
+    [HttpGet("predict/history")]
+    public async Task<ActionResult<HistoryResultDto>> PredictHistoryAsync(int year, int month, int day, int hour, Guid? modelId)
     {
         var dateTime = new DateTime(year, month, day, hour, 0, 0);
 
         try
         {
-            var result = await _innAiService.PredictAsync(dateTime);
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, string.Empty);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
+            var result = await _innAiService.PredictHistoryAsync(dateTime, modelId);
 
-    [HttpGet("actual")]
-    public async Task<ActionResult<double[]>> GetActualAsync(int year, int month, int day, int hour)
-    {
-        var dateTime = new DateTime(year, month, day, hour, 0, 0);
+            var resultDto = new HistoryResultDto()
+            {
+                PredictionValues = result.PredictionValues,
+                ActualValues = result.ActualValues,
+                AverageDeviation = result.AverageDeviation
+            };
 
-        try
-        {
-            var actualValues = await _innAiService.GetActualAsync(dateTime);
-            return Ok(actualValues);
+            return Ok(resultDto);
         }
         catch (Exception e)
         {

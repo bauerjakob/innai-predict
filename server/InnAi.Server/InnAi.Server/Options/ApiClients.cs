@@ -4,7 +4,7 @@ public class ApiClients
 {
     public InnLevelClientOptions InnLevelClient { get; set; }
     public PrecipitationMapClientOptions PrecipitationMapClient { get; set; }
-    public InnAiPredictionClientOptions InnAiPredictinoClient { get; set; }
+    public InnAiPredictionClientOptions InnAiPredictionClient { get; set; }
 }
 
 public class InnLevelClientOptions

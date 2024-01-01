@@ -13,7 +13,7 @@ public class InnAiPredictionClient : IInnAiPredictionClient
 
     public InnAiPredictionClient(IOptions<ApiClients> options)
     {
-        _options = options.Value.InnAiPredictinoClient;
+        _options = options.Value.InnAiPredictionClient;
 
         _client = new HttpClient()
         {
@@ -21,17 +21,15 @@ public class InnAiPredictionClient : IInnAiPredictionClient
         };
     }
     
-    public async Task<double[]> PredictAsync(double[] input)
+    public async Task<double[]> PredictAsync(Guid modelId, double[] input)
     {
         var json = JsonSerializer.Serialize(input);
         
         var buffer = System.Text.Encoding.UTF8.GetBytes(json);
         var byteContent = new ByteArrayContent(buffer);
         byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-
         
-        var result = await _client.PostAsync("/predict", byteContent);
+        var result = await _client.PostAsync($"/predict/{modelId}", byteContent);
         var resultStream = await result.Content.ReadAsStreamAsync();
 
         return await JsonSerializer.DeserializeAsync<double[]>(resultStream) ?? throw new Exception();

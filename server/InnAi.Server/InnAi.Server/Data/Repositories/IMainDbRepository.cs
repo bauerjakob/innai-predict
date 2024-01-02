@@ -1,4 +1,5 @@
 using InnAi.Server.Data.Entities;
+using InnAi.Server.Dtos;
 
 namespace InnAi.Server.Data.Repositories;
 
@@ -12,4 +13,5 @@ public interface IMainDbRepository
     public Task<AiModel> GetDefaultAiModelAsync();
     public Task<AiModel> GetAiModelAsync(Guid modelId);
     public Task<IEnumerable<AiModel>> GetAiModelsAsync();
+    public Task CreateAiModelAsync(CreateModelRequestDto model);
 }

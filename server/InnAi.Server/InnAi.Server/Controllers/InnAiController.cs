@@ -59,8 +59,6 @@ public class InnAiController : ControllerBase
             _logger.LogError(e, string.Empty);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
-
-        
     }
     
     [HttpGet("models")]
@@ -79,5 +77,21 @@ public class InnAiController : ControllerBase
             _logger.LogError(e, string.Empty);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+    
+    [HttpPost("model")]
+    public async Task<IActionResult> CretaeModelAsync(CreateModelRequestDto dto)
+    {
+        try
+        {
+            await _innAiService.CreateAiModelAsync(dto);
+            return Created();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, string.Empty);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        
     }
 }

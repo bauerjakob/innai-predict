@@ -1,4 +1,5 @@
 using InnAi.Server.Data.Entities;
+using InnAi.Server.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnAi.Server.Data.Repositories;
@@ -62,5 +63,20 @@ public class MainDbRepository : IMainDbRepository
     public async Task<IEnumerable<AiModel>> GetAiModelsAsync()
     {
         return await _dbContext.AiModels.ToListAsync();
+    }
+
+    public async Task CreateAiModelAsync(CreateModelRequestDto model)
+    {
+        var aiModel = new AiModel
+        {
+            ExternalId = model.ExternalId,
+            Default = model.Default,
+            Name = model.Name,
+            NumberOfInnLevels = model.NumberOfInnLevels,
+            PrecipitationMapSize = model.PrecipitationMapSize
+        };
+
+        await _dbContext.AiModels.AddAsync(aiModel);
+        await _dbContext.SaveChangesAsync();
     }
 }

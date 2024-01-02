@@ -1,21 +1,68 @@
-version: "3"
+version: "3.1"
 
 services:
     innai-website:
         image: innai-website:1.0
+        restart: always
         build:
             context: ./website
+            dockerfile: Dockerfile
         ports:
-            - 80:3000
+            - 80:8080
         environment:
             - PREDICT_SERVER_BASE_URL=http://innai-server:8080/api/V1
+        networks:
+            - frontend
 
     innai-server:
         image: innai-server:1.0
+        restart: always
         build:
-            context: ./server/InnAi.Server/InnAi.Server
+            context: ./server/InnAi.Server/
+            dockerfile: Dockerfile
+        ports:
+            - 8080:8080
+        environment:
+            ConnectionStrings__DefaultConnection: ${INNAI_SERVER_CONNECTION_STRING}
+            ApiClients__InnAiPredictionClient__BaseUrl: http://innai-predict:8000
+        depends_on:
+            innai-db:
+                condition: service_healthy
+        networks:
+            - backend
+            - frontend
+
+    innai-db:
+        image: postgres:${PSQL_TAG}
+        restart: always
+        ports:
+            - 5433:5432
+        volumes:
+            - ./mount/psql:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: ${PSQL_USER}
+            POSTGRES_PASSWORD: ${PSQL_PASSWORD}
+            POSTGRES_DB: ${PSQL_DATABASE}
+        healthcheck:
+            test:
+                ["CMD-SHELL", "pg_isready -U ${PSQL_USER} -d ${PSQL_DATABASE}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        networks:
+            - backend
 
     innai-predict:
         image: innai-predict:1.0
+        restart: always
         build:
             context: ./innai
+            dockerfile: Dockerfile
+        ports:
+            - 8000:80-k00
+        networks:
+            - backend
+
+networks:
+    frontend:
+    backend:

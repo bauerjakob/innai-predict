@@ -7,9 +7,9 @@ import Datepicker from "../components/Datepicker.astro";
 import SelectModelDropdown from "../components/SelectModelDropdown.astro";
 
 const dateOption = Astro.url.searchParams.get("date");
-const date = new Date(dateOption);
+const date = dateOption ? new Date(dateOption) : undefined;
 
-const dateValue2 = dateOption ? `${date.getFullYear()}` : null;
+const dateValue2 = date ? `${date.getFullYear()}` : null;
 ---
 
 <Layout title="Welcome to Astro.">
@@ -27,7 +27,7 @@ const dateValue2 = dateOption ? `${date.getFullYear()}` : null;
         <div id="chart-wrapper">
             <div class="center">
                 {
-                    dateOption ? (
+                    date ? (
                         <h2>
                             On
                             <span class="text-gradient">

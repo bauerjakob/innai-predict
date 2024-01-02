@@ -10,10 +10,10 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build --prod
+RUN pnpm run build --prod 
 
-FROM base
-COPY --from=prod-deps /app/node_modules /app/node_modules
+FROM node:20-alpine AS runtime
+
 COPY --from=build /app/dist /app/dist
-EXPOSE 3000
-CMD [ "pnpm", "start" ]
+EXPOSE 8080
+CMD HOST=0.0.0.0 PORT=8080 node /app/dist/server/entry.mjs

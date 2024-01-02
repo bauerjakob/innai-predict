@@ -1,0 +1,28 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="InnAi">
+    <main>
+        <h1>Not <span class="text-gradient">Found</span></h1>
+        <h2>Go <a href="/">Home</a></h2>
+    </main>
+</Layout>
+
+<style>
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    h2 {
+        margin: 0 auto;
+    }
+
+    a {
+        color: #3182ce;
+        text-decoration: none;
+    }
+</style>

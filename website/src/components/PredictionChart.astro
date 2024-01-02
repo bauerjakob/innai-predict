@@ -6,13 +6,14 @@ import Card from "./Card.astro";
 const predictService = new PredictService();
 
 const dateOption = Astro.url.searchParams.get("date");
+const modelId = Astro.url.searchParams.get("model");
 
 let dataset = [];
 let averageDeviation = undefined;
 let percentageDeviation = undefined;
 
 if (dateOption) {
-    const dataPrediction = await predictService.predictDate(dateOption);
+    const dataPrediction = await predictService.predictDate(modelId, dateOption);
 
     averageDeviation = Math.round(dataPrediction.averageDeviation! * 100) / 100;
     percentageDeviation = Math.round(dataPrediction.percentageDeviation! * 100 * 100) / 100;
@@ -32,7 +33,7 @@ if (dateOption) {
         },
     ];
 } else {
-    const dataPrediction = await predictService.predictCurrent();
+    const dataPrediction = await predictService.predictCurrent(modelId);
 
     dataset = [
         {

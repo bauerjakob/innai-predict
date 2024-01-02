@@ -1,0 +1,105 @@
+---
+import { PredictService } from "../services/PredictService";
+import { AiModelDto } from "../dtos/AiModelDto";
+
+const predictService = new PredictService();
+
+const modelOption = Astro.url.searchParams.get("model");
+
+const aiModels = await predictService.getAiModelsAsync();
+
+const selectedModel =
+    modelOption ??
+    aiModels.find((x: AiModelDto) => x.default)?.id ??
+    aiModels[0].id;
+
+console.log(aiModels);
+---
+
+<div>
+    <select id="modelSelect">
+        {
+            aiModels.map((x: AiModelDto) => {
+                if (selectedModel === x.id) {
+                    return (
+                        <option selected value={x.id}>
+                            {x.name}
+                        </option>
+                    );
+                }
+                return <option value={x.id}>{x.name}</option>;
+            })
+        }
+    </select>
+</div>
+
+<p>
+    Help to find the right model is
+    <a href="./models">here</a>.
+</p>
+
+<script>
+    document
+        ?.getElementById("modelSelect")
+        ?.addEventListener("change", (e: any) => {
+            const modelId = e?.target?.value;
+
+            if (modelId) {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set("model", modelId);
+                window.location.search = urlParams as any;
+            }
+        });
+</script>
+
+<style lang="scss">
+    div {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: rgb(134, 134, 134);
+        font-size: 12pt;
+    }
+
+    a {
+        color: #3182ce;
+        text-decoration: none;
+    }
+
+    //
+    select {
+        width: 100%;
+        text-decoration: none;
+        padding: 0.7rem;
+        border-radius: 8px;
+        color: white;
+        background-color: #23262d;
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    div {
+        list-style: none;
+        display: flex;
+        padding: 1px;
+        background-color: #23262d;
+        background-image: none;
+        background-size: 400%;
+        border-radius: 7px;
+        background-position: 100%;
+        transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    div:is(:hover, :focus-within) {
+        background-position: 0;
+        background-image: linear-gradient(
+            45deg,
+            rgb(var(--accent)),
+            rgb(var(--accent-light)) 30%,
+            white 60%
+        );
+        color: rgb(var(--accent-light)) !important;
+    }
+</style>

@@ -1,11 +1,12 @@
 import type { HistoryResultDto } from "../dtos/HistoryResultDto";
+import type { AiModelDto } from "../dtos/AiModelDto";
 
 const { PREDICT_SERVER_BASE_URL } = import.meta.env;
 
 export class PredictService {
 
-    async predictCurrent(): Promise<number[]> {
-        const request = this.GetRequestInfo("innAi/predict/current");
+    async predictCurrent(modelId: string | null): Promise<number[]> {
+        const request = this.GetRequestInfo("innAi/predict/current" + this.getModelIdAppendex(modelId, "?"));
         return fetch(request)
             .then(res => res.json())
             .then(res => {
@@ -13,14 +14,14 @@ export class PredictService {
             });
     }
 
-    async predictDate(isoDate: string): Promise<HistoryResultDto> {
+    async predictDate(modelId: string | null, isoDate: string): Promise<HistoryResultDto> {
         const date = new Date(isoDate);
 
-        return this.predictDate2(date.getFullYear(), date.getMonth() + 1, date.getDate());
+        return this.predictDate2(modelId, date.getFullYear(), date.getMonth() + 1, date.getDate());
     }
 
-    async predictDate2(year: number, month: number, day: number): Promise<HistoryResultDto> {
-        const request = this.GetRequestInfo("innAi/predict/history?year=" + year + "&month=" + month + "&day=" + day + "&hour=0");
+    async predictDate2(modelId: string | null, year: number, month: number, day: number): Promise<HistoryResultDto> {
+        const request = this.GetRequestInfo("innAi/predict/history?year=" + year + "&month=" + month + "&day=" + day + "&hour=0" + this.getModelIdAppendex(modelId, "&"));
         return fetch(request)
             .then(res => res.json())
             .then(res => {
@@ -28,19 +29,17 @@ export class PredictService {
             });
     }
 
-    async actualDate(isoDate: string): Promise<number[]> {
-        const date = new Date(isoDate);
-
-        return this.actualDate2(date.getFullYear(), date.getMonth() + 1, date.getDate());
-    }
-
-    async actualDate2(year: number, month: number, day: number): Promise<number[]> {
-        const request = this.GetRequestInfo("innAi/actual?year=" + year + "&month=" + month + "&day=" + day + "&hour=0");
+    async getAiModelsAsync(): Promise<AiModelDto[]> {
+        const request = this.GetRequestInfo("innAi/models");
         return fetch(request)
             .then(res => res.json())
             .then(res => {
-                return res as number[]
+                return res as AiModelDto[]
             });
+    }
+
+    private getModelIdAppendex(modelId: string | null, leading: string) {
+        return modelId ? leading + "modelId=" + modelId : "";
     }
 
     private GetRequestInfo(route: string) {

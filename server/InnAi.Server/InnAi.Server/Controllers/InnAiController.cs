@@ -33,9 +33,10 @@ public class InnAiController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpGet("predict/history")]
-    public async Task<ActionResult<HistoryResultDto>> PredictHistoryAsync(int year, int month, int day, int hour, Guid? modelId)
+    public async Task<ActionResult<HistoryResultDto>> PredictHistoryAsync(int year, int month, int day, int hour,
+        Guid? modelId)
     {
         var dateTime = new DateTime(year, month, day, hour, 0, 0);
 
@@ -52,6 +53,26 @@ public class InnAiController : ControllerBase
             };
 
             return Ok(resultDto);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, string.Empty);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        
+    }
+    
+    [HttpGet("models")]
+    public async Task<ActionResult<AiModelDto[]>> GetAiModelsAsync()
+    {
+        try
+        {
+            var aiModels = await _innAiService.GetAiModelsAsync();
+
+            var result = aiModels.Select(x => new AiModelDto {Id = x.ExternalId, Name = x.Name, Default = x.Default});
+            
+            return Ok(result.ToArray());
         }
         catch (Exception e)
         {

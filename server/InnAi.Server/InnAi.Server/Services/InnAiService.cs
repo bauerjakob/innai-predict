@@ -1,3 +1,4 @@
+using InnAi.Server.Data.Entities;
 using InnAi.Server.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -52,6 +53,11 @@ public class InnAiService(
         await dbRepository.AddNewAiModelResultAsync(aiModelId, dateTime, predictedValues, actualValues, averageDeviation, percentageDeviation);
 
         return (predictedValues, actualValues, averageDeviation, percentageDeviation);
+    }
+
+    public Task<IEnumerable<AiModel>> GetAiModelsAsync()
+    {
+        return dbRepository.GetAiModelsAsync();
     }
 
     private static double CalculateAverageDeviation(IReadOnlyCollection<double> values1, IReadOnlyList<double> values2)

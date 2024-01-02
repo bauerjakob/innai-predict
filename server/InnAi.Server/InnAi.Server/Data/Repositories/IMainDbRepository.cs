@@ -11,4 +11,5 @@ public interface IMainDbRepository
 
     public Task<AiModel> GetDefaultAiModelAsync();
     public Task<AiModel> GetAiModelAsync(Guid modelId);
+    public Task<IEnumerable<AiModel>> GetAiModelsAsync();
 }

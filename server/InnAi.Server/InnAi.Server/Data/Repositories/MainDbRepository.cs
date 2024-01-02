@@ -58,4 +58,9 @@ public class MainDbRepository : IMainDbRepository
     {
         return _dbContext.AiModels.SingleAsync(x => x.ExternalId == modelId);
     }
+
+    public async Task<IEnumerable<AiModel>> GetAiModelsAsync()
+    {
+        return await _dbContext.AiModels.ToListAsync();
+    }
 }

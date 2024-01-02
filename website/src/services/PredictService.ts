@@ -43,7 +43,7 @@ export class PredictService {
     }
 
     private GetRequestInfo(route: string) {
-        const requestUrl = `${PREDICT_SERVER_BASE_URL}/${route}`;
+        const requestUrl = `${PREDICT_SERVER_BASE_URL ?? 'http://innai-server:8080/api/v1'}/${route}`;
         const headers: Headers = new Headers()
         headers.set('Content-Type', 'application/json')
         headers.set('Accept', 'application/json')

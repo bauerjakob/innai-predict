@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import FastAPI
-from predict.model.roach_river_model import RoachRiverModel
 import torch
 from torch.autograd import Variable
 

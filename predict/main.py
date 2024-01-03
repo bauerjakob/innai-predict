@@ -4,6 +4,7 @@ from fastapi import FastAPI
 import torch
 from torch.autograd import Variable
 
+from model.roach_river_model import RoachRiverModel
 from model.salmon_swirl_model import SalmonSwirlModel
 from model.zander_zenith_model import ZanderZenithModel
 

@@ -30,7 +30,7 @@ public class PredictionService(
         var modelInput = precipitationMap.Concat(innLevels).ToArray();
         
         var predictions = await predictionClient.PredictAsync(modelId, modelInput);
-        var denormalizedPredictions = predictions.Select(x => x.Denormalize(0, 500));
+        var denormalizedPredictions = predictions.Select(x => x.Denormalize(0, 700));
 
         return denormalizedPredictions.ToArray();
     }

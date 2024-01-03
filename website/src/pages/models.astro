@@ -1,22 +1,15 @@
 ---
+import Footer from "../components/Footer.astro";
+import ModelDetails from "../components/ModelDetails.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="InnAi">
     <h1><span class="text-gradient">InnAi</span> Models</h1>
     <main>
-        <section>
-            <h2>Salmon Swirl</h2>
-        </section>
-
-        <section>
-            <h2>Zander Zenith</h2>
-        </section>
+        <ModelDetails modelName="Salmon Swirl" />
+        <ModelDetails modelName="Roach River" />
+        <ModelDetails modelName="Zander Zenith" />
     </main>
+    <Footer />
 </Layout>
-
-<style lang="scss">
-    section {
-        margin: 2rem 0;
-    }
-</style>

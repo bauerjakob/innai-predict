@@ -1,0 +1,45 @@
+---
+const { modelName } = Astro.props;
+
+const modelUrl = modelName.replace(" ", "_").toLowerCase();
+---
+
+<section>
+    <h2>{modelName}</h2>
+    <h3>Model Input</h3>
+    <img src=`/models/${modelUrl}/model_input.png` />
+
+    <h3>Training input</h3>
+    <div class="trainStatistics">
+        <img src=`/models/${modelUrl}/training_results/1.png` />
+        <img src=`/models/${modelUrl}/training_results/2.png` />
+        <img src=`/models/${modelUrl}/training_results/3.png` />
+    </div>
+
+    <style lang="scss">
+        section {
+            margin: 2rem 0;
+        }
+
+        h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: grey;
+            margin-top: 1rem;
+        }
+
+        .trainStatistics {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+
+            img {
+                max-width: 95%;
+                width: 22rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</section>

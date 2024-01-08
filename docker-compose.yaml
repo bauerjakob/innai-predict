@@ -59,7 +59,7 @@ services:
             context: ./innai
             dockerfile: Dockerfile
         ports:
-            - 8000:80-k00
+            - 8000:8000
         networks:
             - backend
 

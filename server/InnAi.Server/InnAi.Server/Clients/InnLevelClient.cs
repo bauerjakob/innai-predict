@@ -39,7 +39,7 @@ public class InnLevelClient : IInnLevelClient
         {
             var station = _options.Stations[i];
             
-            var response = await _client.GetAsync($"/api/station/1.0/{(station.Contains("at") ? "height" : "flow")}/{station}/history?granularity=hour&loadEndDate={dateStringEnd}&loadStartDate={dateStringFrom}");
+            var response = await _client.GetAsync($"/api/station/1.0/height/{station}/history?granularity=hour&loadEndDate={dateStringEnd}&loadStartDate={dateStringFrom}");
             
             var content = await response.Content.ReadAsStreamAsync();
             var json = await JsonDocument.ParseAsync(content);

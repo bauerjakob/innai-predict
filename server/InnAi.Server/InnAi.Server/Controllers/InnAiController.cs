@@ -79,19 +79,47 @@ public class InnAiController : ControllerBase
         }
     }
     
-    [HttpPost("model")]
-    public async Task<IActionResult> CretaeModelAsync(CreateModelRequestDto dto)
+    // [HttpPost("model")]
+    // public async Task<IActionResult> CretaeModelAsync(CreateModelRequestDto dto)
+    // {
+    //     try
+    //     {
+    //         await _innAiService.CreateAiModelAsync(dto);
+    //         return Created();
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         _logger.LogError(e, string.Empty);
+    //         return StatusCode(StatusCodes.Status500InternalServerError);
+    //     }
+    //     
+    // }
+
+    [HttpGet("evaluate/month/{modelId}")]
+    public async Task<ActionResult<EvaluateMonthDto>> EvaluateMonthAsync(Guid modelId, int year, int month)
     {
-        try
+        var dateTime = new DateTime(year, month, 1);
+
+        var days = DateTime.DaysInMonth(year, month);
+
+        List<EvaluateDayDto> daysEvaluated = new();
+
+        for (var i = 0; i < days; i++)
         {
-            await _innAiService.CreateAiModelAsync(dto);
-            return Created();
+            var predictionResult = await _innAiService.PredictHistoryAsync(dateTime, modelId);
+
+            var evaluation = new EvaluateDayDto(dateTime, predictionResult.AverageDeviation);
+            daysEvaluated.Add(evaluation);
+            
+            dateTime += TimeSpan.FromDays(1);
         }
-        catch (Exception e)
-        {
-            _logger.LogError(e, string.Empty);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-        
+
+        var sumDeviation = daysEvaluated.Sum(x => x.averageDeviation);
+        var averageDeviation = sumDeviation / daysEvaluated.Count;
+
+        return Ok(new EvaluateMonthDto(daysEvaluated.ToArray(), sumDeviation, averageDeviation));
+
     }
+    
+    
 }

@@ -141,3 +141,7 @@ InnAI is an attempt to predict water level values using precipitation data with 
         <th>Average evaluation loss (denormalized)</th>
     </tr>
 </table>
+
+
+## Installation
+Just look in the <a href="./docker-compose.yaml">docker-compose.yaml</a> 🐳

@@ -1,10 +1,12 @@
-# InnAi Predict 🚀
+# InnAi Predict 🎯
 
 <p align="center">
     <img src="./images/screenshot.png" width="400"  />
 </p>
 
 Visit Website of InnAi 👉 <a href="https://innai.de">here</a> 👈
+
+<hr>
 
 ## What is InnAi 🌊
 InnAI is an attempt to predict water level values using precipitation data with a neural network.
@@ -27,7 +29,7 @@ InnAI is an attempt to predict water level values using precipitation data with 
         <td>Website for displaying and comparing results, with a server featuring a REST interface for data provision.</td>
     </tr>
     <tr>
-        <th>InnAi-Production 🔥</th>
+        <th>InnAi-Production 🚀</th>
         <td><a href="https://github.com/bauerjakob/innai-production">👉 Click here to open</a></td>
         <td>Deployment of Reverse Proxy and Services.</td>
     </tr>

@@ -51,22 +51,26 @@ InnAI is an attempt to predict water level values using precipitation data with 
     <tr>
         <th>Loss graph</th>
         <th>Evaluation graph (normalized)</th>
-        <th>Evaluation graph (denormalized)</th>
-        <th>Average evaluation loss (denormalized)</th>
     </tr>
     <tr>
         <td>
-            <img src="./images/models/salmon_swirl/training_results/1.png" width="250"  />
+            <img src="./images/models/salmon_swirl/training_results/1.png" width="500"  />
         </td>
         <td>
-            <img src="./images/models/salmon_swirl/training_results/2.png" width="250"  />
+            <img src="./images/models/salmon_swirl/training_results/2.png" width="500"  />
         </td>
+    </tr>
+    <tr>
         <td>
-            <img src="./images/models/salmon_swirl/training_results/3.png" width="250"  />
+            <img src="./images/models/salmon_swirl/training_results/3.png" width="500"  />
         </td>
         <td>
             <p align="center">11.9380</p>
         </td>
+    </tr>
+    <tr>
+        <th>Evaluation graph (denormalized)</th>
+        <th>Average evaluation loss (denormalized)</th>
     </tr>
 </table>
 
@@ -81,22 +85,26 @@ InnAI is an attempt to predict water level values using precipitation data with 
     <tr>
         <th>Loss graph</th>
         <th>Evaluation graph (normalized)</th>
-        <th>Evaluation graph (denormalized)</th>
-        <th>Average evaluation loss (denormalized)</th>
     </tr>
     <tr>
         <td>
-            <img src="./images/models/roach_river/training_results/1.png" width="250"  />
+            <img src="./images/models/roach_river/training_results/1.png" width="500"  />
         </td>
         <td>
-            <img src="./images/models/roach_river/training_results/2.png" width="250"  />
+            <img src="./images/models/roach_river/training_results/2.png" width="500"  />
         </td>
+    </tr>
+    <tr>
         <td>
-            <img src="./images/models/roach_river/training_results/3.png" width="250"  />
+            <img src="./images/models/roach_river/training_results/3.png" width="500"  />
         </td>
         <td>
             <p align="center">12.4296</p>
         </td>
+    </tr>
+    <tr>
+        <th>Evaluation graph (denormalized)</th>
+        <th>Average evaluation loss (denormalized)</th>
     </tr>
 </table>
 
@@ -111,21 +119,25 @@ InnAI is an attempt to predict water level values using precipitation data with 
     <tr>
         <th>Loss graph</th>
         <th>Evaluation graph (normalized)</th>
-        <th>Evaluation graph (denormalized)</th>
-        <th>Average evaluation loss (denormalized)</th>
     </tr>
     <tr>
         <td>
-            <img src="./images/models/zander_zenith/training_results/1.png" width="250"  />
+            <img src="./images/models/zander_zenith/training_results/1.png" width="500"  />
         </td>
         <td>
-            <img src="./images/models/zander_zenith/training_results/2.png" width="250"  />
+            <img src="./images/models/zander_zenith/training_results/2.png" width="500"  />
         </td>
+    </tr>
+    <tr>
         <td>
-            <img src="./images/models/zander_zenith/training_results/3.png" width="250"  />
+            <img src="./images/models/zander_zenith/training_results/3.png" width="500"  />
         </td>
         <td>
             <p align="center">12.2053</p>
         </td>
+    </tr>
+    <tr>
+        <th>Evaluation graph (denormalized)</th>
+        <th>Average evaluation loss (denormalized)</th>
     </tr>
 </table>

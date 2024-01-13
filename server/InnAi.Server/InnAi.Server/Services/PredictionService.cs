@@ -70,7 +70,8 @@ public class PredictionService(
     private async Task<IEnumerable<double>> GetNormalizedInnLevelsAsync(DateTime time, int count)
     {
         var innLevels = await innLevelClient.GetAsync(time, count);
-        var innLevelsNormalized = innLevels.Select(x => x.Normalize(0, 500));
+        
+        var innLevelsNormalized = innLevels.Select(x => x.Normalize(0, 700));
         return innLevelsNormalized;
     }
 

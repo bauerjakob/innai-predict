@@ -23,9 +23,9 @@ public class InnLevelClient : IInnLevelClient
         };
     }
     
-    public async Task<double[]> GetAsync(DateTime dateTime, int count)
+    public async Task<double[]> GetAsync(DateTime dateTime, int stationCount)
     {
-        if (count > _options.Stations.Length)
+        if (stationCount > _options.Stations.Length)
         {
             throw new Exception();
         }
@@ -35,28 +35,48 @@ public class InnLevelClient : IInnLevelClient
         var dateStringEnd = ToDateString(timestamp + TimeSpan.FromHours(1));
         List<double> ret = new();
 
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < stationCount; i++)
         {
             var station = _options.Stations[i];
             
-            var response = await _client.GetAsync($"/api/station/1.0/height/{station}/history?granularity=hour&loadEndDate={dateStringEnd}&loadStartDate={dateStringFrom}");
-            
-            var content = await response.Content.ReadAsStreamAsync();
-            var json = await JsonDocument.ParseAsync(content);
-            
-            var serializerOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-    
-            var result = json.Deserialize<PegelAlarmDto>(serializerOptions);
-
-            var payload = result?.Payload ?? throw new Exception();
+            var payload = await MakeCallAsync(station, dateStringEnd, dateStringFrom);
             var nearestMatch = GetNearestItem(payload, timestamp);
             ret.Add(nearestMatch.Value);
         }
 
         return ret.ToArray();
+    }
+
+    public async Task<double[]> GetNextHoursAsync(DateTime dateTime, int hourCount)
+    {
+        var timestamp = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0);
+        var dateStringFrom = ToDateString(timestamp);
+        var dateStringEnd = ToDateString(timestamp + TimeSpan.FromHours(12));
+        
+        var station = _options.Stations[0];
+
+        var result = await MakeCallAsync(station, dateStringEnd, dateStringFrom);
+        
+        return result.History.Select(x => x.Value).Take(3).ToArray();
+    }
+    
+    private async Task<PegelAlarmDtoPayload> MakeCallAsync(string station, string dateStringEnd, string dateStringFrom)
+    {
+        var response = await _client.GetAsync($"/api/station/1.0/height/{station}/history?granularity=hour&loadEndDate={dateStringEnd}&loadStartDate={dateStringFrom}");
+            
+        var content = await response.Content.ReadAsStreamAsync();
+        var json = await JsonDocument.ParseAsync(content);
+            
+        var serializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+    
+        var result = json.Deserialize<PegelAlarmDto>(serializerOptions);
+
+        var payload = result?.Payload ?? throw new Exception();
+        
+        return payload;
     }
 
     private string ToDateString(DateTime dateTime)

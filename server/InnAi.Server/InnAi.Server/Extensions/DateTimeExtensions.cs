@@ -2,7 +2,7 @@ namespace InnAi.Server.Extensions;
 
 public static class DateTimeExtensions
 {
-    public static readonly TimeZoneInfo GermanTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin"); 
+    private static readonly TimeZoneInfo GermanTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin"); 
     
     public static DateTime ToGermanTime(this DateTime utcTime)
     {
@@ -16,5 +16,8 @@ public static class DateTimeExtensions
     }
 
     public static long ToUnixTimeStamp(this DateTime dateTime)
-        => ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+    {
+        return TimeZoneInfo.ConvertTime((DateTimeOffset)dateTime, TimeZoneInfo.Utc)
+            .ToUnixTimeSeconds();
+    }
 }

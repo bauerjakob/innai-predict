@@ -149,6 +149,11 @@ InnAI is an attempt to predict water level values using precipitation data with 
     </tr>
 </table>
 
+## Overall Model Performance
+<p align="center">
+    <img src="./images/model_performance.png" width="700"/>
+</p>
+
 
 ## Installation
 Just look in the <a href="./docker-compose.yaml">docker-compose.yaml</a> 🐳

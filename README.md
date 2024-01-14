@@ -31,7 +31,7 @@ InnAI is an attempt to predict water level values using precipitation data with 
     <tr>
         <th>InnAi-Production 🚀</th>
         <td><a href="https://github.com/bauerjakob/innai-production">👉 Click here to open</a></td>
-        <td>Deployment of Reverse Proxy and Services.</td>
+        <td>Deployment of reverse proxy and services.</td>
     </tr>
 </table>
 

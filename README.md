@@ -30,12 +30,12 @@ InnAI is an attempt to predict water level values using precipitation data with 
     </tr>
     <tr>
         <th>InnAi-Production 🚀</th>
-        <td><a href="https://github.com/bauerjakob/innai-production">👉 Click here to open</a></td>
+        <td>👉 <a href="https://github.com/bauerjakob/innai-production">Click here to open</a></td>
         <td>Deployment of reverse proxy and services.</td>
     </tr>
     <tr>
         <th>InnAi-Results 👀</th>
-        <td><a href="https://github.com/bauerjakob/innai-results">Click here to open 👈</a></td>
+        <td><a href="https://github.com/bauerjakob/innai-results">Click here to open</a> 👈</td>
         <td>After the models have been trained, their performance must be tested on unknown data.</td>
     </tr>
 </table>

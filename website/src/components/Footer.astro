@@ -4,14 +4,20 @@ const year = new Date().getFullYear();
 
 <footer>
     <p>® {year} Jakob Bauer ®</p>
+    <a href="./privacy-policy">Privacy Policy</a>
 </footer>
 
 <style lang="scss">
     footer {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         padding: 2rem 0;
         color: grey;
+    }
+
+    a {
+        font-size: 14pt;
     }
 </style>

@@ -1,0 +1,37 @@
+---
+import Footer from "../components/Footer.astro";
+import Layout from "./Layout.astro";
+
+// 1. Die content-Eigenschaft bietet Zugriff auf Frontmatter-Daten
+---
+
+<Layout title="Privacy Policy">
+    <div class="wrapper">
+        <slot />
+    </div>
+    <Footer />
+</Layout>
+
+<style is:global>
+    .wrapper {
+        width: 50rem;
+        margin: 0 auto;
+    }
+    h2 {
+        color: white;
+        display: block;
+        margin-top: 2rem;
+    }
+
+    h3 {
+        color: white;
+        margin-top: 2rem;
+        font-size: 16pt;
+        font-weight: bold;
+    }
+
+    p {
+        color: rgb(193, 193, 193);
+        font-size: 14pt;
+    }
+</style>

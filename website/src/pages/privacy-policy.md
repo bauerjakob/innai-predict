@@ -2,9 +2,9 @@
 layout: ../layouts/PrivacyPolicy.astro
 ---
 
-# Privacy Policy
+# <span class="text-gradient">Privacy</span> Policy
 
-Effective Date: 14.01.2024
+<strong>Effective Date: 14.01.2024</strong>
 
 ## Introduction
 
@@ -19,9 +19,10 @@ Information about your visits to and use of this website, which could include ge
 Automatically collected information:
 
 We automatically collect certain types of non-personal information such as IP addresses and browser types to understand how our visitors use the website.
-Use of Information
 
-The information we collect is used to:
+## Use of Information
+
+### The information we collect is used to:
 
 Improve your experience by understanding how users interact with our website;
 Conduct internal analytics and performance monitoring.
@@ -48,4 +49,4 @@ We may update this privacy policy by posting a new version on our website. Pleas
 
 ## Contact Information
 
-For any questions about this privacy policy or our treatment of your data, please contact us at mail@bauer-jakob.de.
+For any questions about this privacy policy or our treatment of your data, please contact us at <strong>mail@bauer-jakob.de</strong>.

@@ -31,9 +31,12 @@ const dateValue2 = date ? `${date.getFullYear()}` : null;
                         <h2>
                             On
                             <span class="text-gradient">
-                                {`${date.getDate()}.${
-                                    date.getMonth() + 1
-                                }.${date.getFullYear()}`}
+                                {`${date
+                                    .getDate()
+                                    .toString()
+                                    .padStart(2, "0")}.${(date.getMonth() + 1)
+                                    .toString()
+                                    .padStart(2, "0")}.${date.getFullYear()}`}
                             </span>
                         </h2>
                     ) : (

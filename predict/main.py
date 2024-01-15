@@ -12,8 +12,6 @@ app = FastAPI()
 
 @app.post("/predict/{modelId}")
 async def predict(modelId: str, input: List[float]) -> List[float]:
-
-    print (input)
     model = None
     if modelId == '60740723-5ce0-4989-9d79-ecf4c436a029':
         model = SalmonSwirlModel()

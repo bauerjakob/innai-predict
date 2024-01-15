@@ -8,8 +8,6 @@ import SelectModelDropdown from "../components/SelectModelDropdown.astro";
 
 const dateOption = Astro.url.searchParams.get("date");
 const date = dateOption ? new Date(dateOption) : undefined;
-
-const dateValue2 = date ? `${date.getFullYear()}` : null;
 ---
 
 <Layout title="InnAi">
